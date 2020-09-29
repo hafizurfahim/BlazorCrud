@@ -1,0 +1,71 @@
+﻿@page "/StudentPages/StudentList"
+
+@using BlazorCrud.Model
+@using BlazorCrud.Gateway
+@inject IJSRuntime runtime
+
+    <h1>List of Students and  informations.</h1>
+<a class="btn btn-info" href="StudentPages/Add">Add new Student</a>
+
+
+@if (students == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Registration No (C)</th>
+                <th> Address</th>
+                <th>Mobile NO</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in students)
+            {
+                <tr>
+                    <td>@student.name</td>
+                    <td>@student.registrationNo</td>
+                    <td>@student.address</td>
+                    <td>@student.mobileNo</td>
+                    <td>
+                        <a href="StudentPages/Edit/@student.id">Edit</a>
+                    </td>
+                    <td>
+                       @* <a onclick="(()=>DeleteStudent(@student.id))" class="btn btn-danger">Delete</a>*@
+                        <a @onclick="(()=>DeleteStudent(student.id))" class="btn-danger">Delete</a>
+                    </td>
+                
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Student> students = null;
+    GatewayManager gatewayM = new GatewayManager();
+
+    protected override void  OnInitialized()
+    {
+        students = gatewayM.ViewAll();
+    }
+    public async Task DeleteStudent(int id)
+    {
+        bool confirmDelete =await runtime.InvokeAsync<bool>("confirm", "Do you want to delete this Student ?.");
+        if (confirmDelete)
+        {
+            bool isDelete = gatewayM.Delete(id);
+            OnInitialized();
+        }
+
+
+
+
+
+    }
+}

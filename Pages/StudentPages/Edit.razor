@@ -1,0 +1,30 @@
+﻿@page "/StudentPages/Edit/{id:int}"
+@inject NavigationManager navigate
+@using BlazorCrud.Model
+@using BlazorCrud.Gateway
+<h3>Edit</h3>
+<h5>@msg</h5>
+<StudentCommonPages student="student" ButtonText="Edit" OnvalidSubmit="UpdateData"></StudentCommonPages>
+@code {
+    Student student = new Student();
+    [Parameter] public int id { get; set; }
+    string msg = null;
+    GatewayManager gatewayM = new GatewayManager();
+    protected override void OnInitialized()
+    {
+        student = gatewayM.Edit(id);
+    }
+
+    public void UpdateData()
+    {
+        bool saved = gatewayM.Update(student);
+        if (saved)
+        {
+            student = new Student();
+            msg = "Updated data successfully.";
+            navigate.NavigateTo("StudentPages/StudentList");
+           
+        }
+    }
+
+}

@@ -1,0 +1,58 @@
+﻿@page "/StudentPages/MatBlazorPages/MatPages"
+@using MatBlazor
+@using BlazorCrud.Model
+@using BdLocation.Model
+<h3>MatPages</h3>
+
+
+<p>
+    <MatSelect Label="Division Name" @bind-Value="@DivisionId" @onchange="LaodOut">
+      @foreach(var div in divisions) { 
+        <MatOption TValue="int" Value="@div.Id">@div.DivisionName</MatOption>
+        }
+    </MatSelect>
+</p>
+
+<p>
+    <MatSelect Label="Division Name" @bind-Value="@DistrictId">
+        @foreach (var district in districts)
+        {
+            <MatOption TValue="int" Value="@district.Id">@district.DistrictName</MatOption>
+        }
+    </MatSelect>
+</p>
+<p>
+    <MatSelect Label="Thana Name" @bind-Value="@ThanaId" @onchange="ThanaLoad">
+        @foreach (var thana in thanas)
+        {
+            <MatOption TValue="int" Value="@thana.Id">@thana.ThanaName</MatOption>
+        }
+    </MatSelect>
+</p>
+
+<br />
+@code{
+
+    int DivisionId;
+    int ThanaId;
+    int DistrictId;
+    List<Division> divisions =Location.GetAllDivision();
+
+    List<District> districts = Location.GetAllDistrict();
+    List<Thana> thanas = Location.GetAllThana();
+
+    public void LaodOut(ChangeEventArgs e)
+    {
+        int id = Convert.ToInt32(e.Value.ToString());
+        districts = Location.GetAllDistrictByDivisionId(id);
+
+    }
+    public void ThanaLoad(ChangeEventArgs e)
+    {
+        int districtID = Convert.ToInt32(e.Value.ToString());
+        thanas = Location.GetAllThanaByDistrictId(districtID);
+
+    }
+
+
+}
